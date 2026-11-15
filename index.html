@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Family Trip 旅遊手冊</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap">
+<style>
+:root{--bg:#e9f3fa;--card:#fff;--ink:#12324a;--mute:#5b7587;--line:#cfe0ec;--blue:#0b6aa8;--orange:#e8772e;--chip:#fff;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d1d29;--card:#15293a;--ink:#e5eff6;--mute:#93aabb;--line:#294257;--blue:#58b0e6;--orange:#f0954f;--chip:#15293a}}
+:root[data-theme="dark"]{--bg:#0d1d29;--card:#15293a;--ink:#e5eff6;--mute:#93aabb;--line:#294257;--blue:#58b0e6;--orange:#f0954f;--chip:#15293a}
+html{scroll-behavior:smooth;scroll-padding-top:calc(env(safe-area-inset-top,0px) + 64px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 "Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif}
+.hero{background:linear-gradient(180deg,#0b6aa8,#5ab6e6);color:#fff;text-align:center;padding:44px 16px 70px}
+.hero h1{margin:0;font-size:2rem;letter-spacing:.03em}
+.hero p{margin:4px 0 0;opacity:.92}
+.cd{max-width:420px;margin:-48px auto 0;background:var(--card);border-radius:20px;padding:16px;text-align:center;box-shadow:0 6px 20px rgba(11,60,100,.15)}
+.cd span{color:var(--mute);font-size:.9rem}
+.cd b{display:block;font-size:1.5rem;color:var(--orange)}
+.tags{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;max-width:620px;margin:14px auto 0;padding:0 12px}
+.tags i{font-style:normal;background:var(--chip);border:1px solid var(--line);border-radius:99px;padding:4px 12px;font-size:.9rem}
+nav{position:sticky;top:0;z-index:5;background:var(--bg);padding:10px 12px;padding-top:calc(env(safe-area-inset-top,0px) + 10px);display:flex;gap:8px;overflow-x:auto;margin-top:14px}
+nav a{flex:0 0 auto;text-decoration:none;color:var(--blue);background:var(--chip);border:1px solid var(--line);border-radius:99px;padding:8px 14px;min-height:44px;display:flex;align-items:center;font-weight:500}
+nav a:focus-visible,summary:focus-visible,a.btn:focus-visible{outline:3px solid var(--orange);outline-offset:2px}
+main{max-width:640px;margin:0 auto;padding:0 14px 56px}
+h2{color:var(--blue);font-size:1.25rem;margin:28px 0 10px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:10px}
+.card h3{margin:0 0 2px;font-size:1.05rem}
+.mute{color:var(--mute);font-size:.9rem}
+.scroll{display:flex;gap:10px;overflow-x:auto;padding-bottom:6px}
+.scroll .card{flex:0 0 220px;margin:0}
+.tag{display:inline-block;font-size:.78rem;color:var(--orange);border:1px solid var(--orange);border-radius:6px;padding:0 6px;margin-top:4px}
+a.btn{display:inline-block;margin-top:8px;background:var(--blue);color:#fff;text-decoration:none;border-radius:8px;padding:8px 14px;min-height:44px;line-height:28px;font-weight:500}
+details{background:var(--card);border:1px solid var(--line);border-radius:14px;margin-bottom:8px}
+summary{cursor:pointer;padding:12px 14px;font-weight:700;min-height:44px;list-style:none;display:flex;justify-content:space-between;gap:8px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"▾";color:var(--mute)}
+details[open] summary::after{content:"▴"}
+details>div{padding:0 14px 12px}
+.tl{list-style:none;margin:0;padding:0 0 0 14px;border-left:3px solid var(--blue)}
+.tl li{position:relative;padding:4px 0 10px 12px}
+.tl li::before{content:"";position:absolute;left:-23px;top:11px;width:12px;height:12px;border-radius:50%;background:var(--card);border:3px solid var(--blue)}
+.tl .t{font-weight:700;margin-right:6px}
+.room{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.room span{background:var(--bg);border-radius:8px;padding:2px 10px;font-size:.92rem}
+ul.plain{margin:6px 0 0;padding-left:20px}
+.chk{list-style:none;margin:6px 0 0;padding:0}
+.chk li{display:flex;gap:10px;align-items:center;min-height:44px}
+.chk input{width:24px;height:24px;flex:0 0 auto;accent-color:var(--blue)}
+.chk label{flex:1}
+footer{text-align:center;color:var(--mute);font-size:.85rem;padding:0 16px 32px}
+</style>
+</head>
+<body>
+<header class="hero"><h1 id="title"></h1><p id="dates"></p></header>
+<div class="cd"><span id="cdLabel"></span><b id="cd" aria-live="off"></b></div>
+<div class="tags" id="tags"></div>
+<nav id="nav" aria-label="章節"></nav>
+<main id="main"></main>
+<footer>行程內容依出發前規劃，實際班次與營業時間以當天為準。</footer>
+
+<script>
+/* ===== 只要改這一區 ===== */
+var DATA={
+  title:"首爾家族旅遊",
+  start:"2026-11-20T18:30:00", end:"2026-11-25",
+  dest:"首爾", tags:["12 位家人","6 天 5 夜","自由行＋包車"],
+  flights:[
+    {name:"去程",line:"真航空 LJ188",time:"11/20 18:30 台中 → 22:15 仁川第二航廈（T2）",note:"台中機場集合、團體登機；入境後確認包車司機位置"},
+    {name:"回程",line:"真航空 LJ185",time:"11/25 07:50 仁川 T2 起飛 → 10:00 抵達台中",note:"05:00 包車出發前往機場"}
+  ],
+  spots:[
+    {name:"奉恩寺",note:"23 公尺彌勒大佛，地勢平坦，長輩喜愛",map:"https://www.google.com/maps/search/?api=1&query=Bongeunsa+Temple"},
+    {name:"COEX 星空圖書館",note:"全家福合照；旁邊有水族館",map:"https://www.google.com/maps/search/?api=1&query=Starfield+Library+COEX"},
+    {name:"景福宮（韓服體驗）",note:"穿韓服免費入宮，宮內平坦、有休息亭",map:"https://www.google.com/maps/search/?api=1&query=Gyeongbokgung"},
+    {name:"北村韓屋村",note:"坡道較陡，長輩可在茶屋休息",map:"https://www.google.com/maps/search/?api=1&query=Bukchon+Hanok+Village"},
+    {name:"N 首爾塔（南山）",note:"夜景與愛情鎖牆，夜間風大",map:"https://www.google.com/maps/search/?api=1&query=N+Seoul+Tower"},
+    {name:"Sparex 東大門店",note:"汗蒸幕、黃土蒸房與泡澡，全家舒壓",map:"https://www.google.com/maps/search/?api=1&query=Sparex+Dongdaemun"}
+  ],
+  food:[
+    {name:"狎鷗亭／羅德奧街",tag:"韓式烤肉",note:"Day 2 晚餐，人多建議先訂位",map:"https://www.google.com/maps/search/?api=1&query=Apgujeong+Rodeo+Street"},
+    {name:"三清洞",tag:"人參雞湯／刀削麵",note:"Day 3 午餐，主街平坦",map:"https://www.google.com/maps/search/?api=1&query=Samcheongdong"},
+    {name:"廣藏市場",tag:"綠豆煎餅",note:"紫菜包飯、生牛肉",map:"https://www.google.com/maps/search/?api=1&query=Gwangjang+Market"},
+    {name:"望遠市場",tag:"炸雞塊",note:"Day 4 午餐小吃",map:"https://www.google.com/maps/search/?api=1&query=Mangwon+Market"},
+    {name:"明洞餃子／神仙雪濃湯",tag:"長輩溫和",note:"Day 5 午餐，雪濃湯易消化",map:"https://www.google.com/maps/search/?api=1&query=Myeongdong+Kyoja"}
+  ],
+  rooms:[
+    {name:"住宿地點",type:"江北區｜9 Insubong-ro 6-gil, 시우파크빌라, 3층 301호, Seoul 01183",map:"https://www.google.com/maps/search/?api=1&query=9+Insubong-ro+6-gil+Seoul+01183",rooms:[{n:"臥室 1（4 人）",who:["小阿姨"]},{n:"臥室 2（2 人）",who:["尚未分配"]},{n:"臥室 3（2 人）",who:["尚未分配"]},{n:"臥室 4（2 人）",who:["尚未分配"]},{n:"客廳（2 人）",who:["尚未分配"]}]}
+  ],
+  days:[
+    {label:"Day 1｜11/20（五）抵達",open:true,items:[["18:30","台中機場起飛，搭 LJ188"],["22:15","抵達仁川 T2，入境、領行李"],["23:30","搭預約包車前往江北區（約 50–60 分）"],["00:30","入住，長輩小孩優先休息"]]},
+    {label:"Day 2｜11/21（六）江南",items:[["10:00","奉恩寺（9 號線奉恩寺站 1 號出口）"],["12:30","COEX Mall 午餐"],["14:00","星空圖書館／水族館，可分組行動"],["17:30","狎鷗亭羅德奧街散策、韓式烤肉晚餐"]]},
+    {label:"Day 3｜11/22（日）景福宮與南山",items:[["09:30","景福宮換韓服、拍全家福（3 號線景福宮站 5 號出口）"],["12:30","三清洞午餐 → 北村韓屋村散步"],["16:00","廣藏市場（1 號線鍾路五街站 7 號出口）"],["19:00","計程車到南山纜車站，N 首爾塔夜景"]]},
+    {label:"Day 4｜11/23（一）望遠、弘大",items:[["11:00","望遠市場（6 號線望遠站 2 號出口）"],["13:30","弘大商圈，年輕人逛街、長輩小孩咖啡廳歇腳"],["17:30","首爾站 Lotte Mart 大採購"]]},
+    {label:"Day 5｜11/24（二）明洞與汗蒸幕",items:[["10:30","明洞漫遊、Olive Young、午餐"],["16:30","Sparex 東大門店汗蒸幕（4 號線東大門歷史文化公園站）"],["20:00","晚餐後返回江北住宿、打包行李"]]},
+    {label:"Day 6｜11/25（三）返台",items:[["05:00","包車直達仁川 T2"],["07:50","LJ185 起飛"],["10:00","抵達台中清泉崗機場"]]}
+  ],
+  tips:[
+    {name:"保暖防寒",list:["11 月下旬約 5–15°C","發熱衣、厚外套、圍巾、暖暖包","夜間與南山塔風大"]},
+    {name:"交通安排",list:["機場接送、深夜抵達與清晨離開，預約 12–15 人座包車","首爾氣候卡韓幣 3,000 + 5 日券韓幣 15,000（每人）"]},
+    {name:"確認清單",check:true,list:["護照","常備藥","轉接頭","行充","魔法小卡"]}
+  ]
+};
+/* ===== 以下不用動 ===== */
+(function(){
+  var $=function(i){return document.getElementById(i)};
+  function el(t,c,x){var n=document.createElement(t);if(c)n.className=c;if(x!=null)n.textContent=x;return n}
+  function sec(id,title){var h=el("h2","",title);h.id=id;$("main").append(h)}
+  function link(href,text){var a=el("a","btn",text);a.href=href;a.target="_blank";a.rel="noopener noreferrer";return a}
+  document.title=DATA.title;
+  $("title").textContent=DATA.title;
+  var s=new Date(DATA.start),e=new Date(DATA.end+"T00:00:00");
+  var f=function(d){return d.getFullYear()+"."+(d.getMonth()+1)+"."+d.getDate()};
+  $("dates").textContent=f(s)+" – "+f(e);
+  DATA.tags.forEach(function(t){$("tags").append(el("i","",t))});
+  function tick(){
+    var ms=s-new Date();
+    if(ms<=0){$("cdLabel").textContent=DATA.dest;$("cd").textContent="旅程進行中，玩得開心！";return}
+    $("cdLabel").textContent=DATA.dest+"出發倒數";
+    var d=Math.floor(ms/864e5),h=Math.floor(ms%864e5/36e5),m=Math.floor(ms%36e5/6e4),x=Math.floor(ms%6e4/1e3);
+    $("cd").textContent=d+"天 "+h+"小時 "+m+"分 "+x+"秒";
+  }
+  tick();setInterval(tick,1000);
+
+  var parts=[["flight","✈️ 航班"],["spots","📍 景點"],["food","🍜 美食"],["stay","🏨 住宿"],["plan","📅 行程"],["tips","🧳 提醒"]];
+  parts.forEach(function(p){var a=el("a","",p[1]);a.href="#"+p[0];$("nav").append(a)});
+
+  sec("flight","✈️ 航班資訊");
+  DATA.flights.forEach(function(x){var c=el("div","card");c.append(el("h3","",x.name+"｜"+x.line),el("div","",x.time),el("div","mute",x.note));$("main").append(c)});
+
+  sec("spots","📍 必訪景點");
+  var sc=el("div","scroll");
+  DATA.spots.forEach(function(x){var c=el("div","card");c.append(el("h3","",x.name),el("div","mute",x.note),link(x.map,"地圖"));sc.append(c)});
+  $("main").append(sc);
+
+  sec("food","🍜 美食推薦");
+  var fc=el("div","scroll");
+  DATA.food.forEach(function(x){var c=el("div","card");c.append(el("h3","",x.name),el("span","tag",x.tag),el("div","mute",x.note),link(x.map,"地圖"));fc.append(c)});
+  $("main").append(fc);
+
+  sec("stay","🏨 住宿與房間分配");
+  DATA.rooms.forEach(function(r){
+    var c=el("div","card");c.append(el("h3","",r.name),el("div","mute",r.type));
+    r.rooms.forEach(function(rm){c.append(el("div","",rm.n));var w=el("div","room");rm.who.forEach(function(n){w.append(el("span","",n))});c.append(w)});if(r.map){c.append(link(r.map,"地圖"))}
+    $("main").append(c);
+  });
+
+  sec("plan","📅 每日行程");
+  DATA.days.forEach(function(d){
+    var dt=el("details");if(d.open)dt.open=true;
+    dt.append(el("summary","",d.label));
+    var box=el("div"),ul=el("ul","tl");
+    d.items.forEach(function(i){var li=el("li");li.append(el("span","t",i[0]),document.createTextNode(i[1]));ul.append(li)});
+    box.append(ul);dt.append(box);$("main").append(dt);
+  });
+
+  sec("tips","🧳 旅遊小提醒");
+  DATA.tips.forEach(function(t){
+    var dt=el("details");dt.append(el("summary","",t.name));
+    var box=el("div"),ul=el("ul",t.check?"chk":"plain");t.list.forEach(function(x,i){var li=el("li");if(t.check){var k="chk-"+i,cb=document.createElement("input");cb.type="checkbox";cb.id=k;try{cb.checked=localStorage.getItem(k)==="1"}catch(e){}cb.onchange=function(){try{localStorage.setItem(k,cb.checked?"1":"0")}catch(e){}};var lb=el("label","",x);lb.htmlFor=k;li.append(cb,lb)}else{li.textContent=x}ul.append(li)});
+    box.append(ul);dt.append(box);$("main").append(dt);
+  });
+})();
+</script>
+</body>
+</html>
